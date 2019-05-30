@@ -19,6 +19,11 @@ public class gameHandler : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        if(Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
 		
 	}
 
@@ -30,4 +35,6 @@ public class gameHandler : MonoBehaviour {
         UI.SetActive(false);
         player.SetActive(true);
     }
+
+
 }

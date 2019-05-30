@@ -6,23 +6,27 @@ using UnityEngine.UI;
 
 public class playerMovement : MonoBehaviour {
 
-    public float moveSpeed = 2.0f;  // Units per second
-    public int cooldown;
-    public Vector3 targetPos;
+    //At the beginning of a script, we need to declare Variables - these are all the possible values that we'll need to call upon
+    // or make use of throughout the script - they'll make more sense later on!
+
+    public float moveSpeed = 2.0f;  //Defines the speed our animal moves at
+    public int cooldown; //Defines the counter for the cooldown period between actions, to stop our animal making decisions too rapidly
+    public Vector3 targetPos; //Contains the position that our animal will move to each time he decides to move
     public GameObject posMarker;
     GameObject tempPosMarker;
-    public bool isResting;
+    public bool isResting; //Is our animal resting? This 'true or false' value contains the answer!
 
+    //The following variables are for calculating the minimum and maximum area of the screen, so our animal doesn't move out of sight!
     public GameObject minXmaxY;
     public GameObject maxXminY;
     float minX, maxX, minY, maxY;
 
-    public float Energy;
-    int energyModifier;
-    public Text energyCounter;
-    public Text statusText;
+    public float Energy; //Important! This is our animals energy
+    int energyModifier; //This will contain the modifier for our animals energy
+    public Text energyCounter; //The actual in-game text object used to display our animal's energy
+    public Text statusText; //The actual in-game text object used to display our animal's status
 
-    public bool movementTriggered = false;
+    public bool movementTriggered = false; //A true/false variable used to tell whether the animal is moving!
 
     public int decisionNumber;
 
@@ -48,7 +52,7 @@ public class playerMovement : MonoBehaviour {
             energyCounter.text = "Energy: " + Energy.ToString("F0");
         }
 
-
+        //Check to make sure our animal isn't already in the middle of an action - he needs to have a chance to breathe between movements!
         if (cooldown <= 0)
         {
 
@@ -61,12 +65,12 @@ public class playerMovement : MonoBehaviour {
 
             if (Energy > 50)
             {
-                //If energy is more than 50, add 20 to the value
+                //If energy is more than 50, add 20 to the value, making it more likely our animal will want to move
                 energyModifier = 20;
             }
             else if (Energy < 50)
             {
-                //If energy is less tahn 50, decrease 20 from the decision number
+                //If energy is less than 50, decrease 20 from the decision number, making it more likely our animal will want to rest
                 energyModifier = -20;
             }
 
@@ -76,6 +80,7 @@ public class playerMovement : MonoBehaviour {
             //Make decisions based on that number
             if (decisionNumber >= 0 && decisionNumber <= 75)
             {
+                //If the number is between 0 and 75 - our animal will rest!
                 targetPos = gameObject.transform.position;
                 movementTriggered = false;
                 isResting = true;
@@ -85,10 +90,12 @@ public class playerMovement : MonoBehaviour {
 
             if (decisionNumber >= 76 && decisionNumber <= 100)
             {
+                //However, if the number is between 76 and 100, our animal will move!
                 isResting = false;
 
                 statusText.text = "Status: Moving";
 
+                //Set our target position to be a random position, between the bounds of the screen so he remains on camera!
                 targetPos = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), gameObject.transform.position.z);
 
                 if (tempPosMarker != null)
@@ -104,7 +111,7 @@ public class playerMovement : MonoBehaviour {
         }
 
 
-
+        //This 'if statement' checks to see whether our animal's movement has been triggered, and handles his actual movement!
         if (movementTriggered == true)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
@@ -120,6 +127,8 @@ public class playerMovement : MonoBehaviour {
             Debug.Log("Distance from player to target is " + Vector3.Distance(targetPos, transform.position));
 
         }
+        //This if statement will detect whether the animal is close to his targetposition - if he is, hes reached his destination and we have to
+        // stop him moving!
         if (movementTriggered == true && Vector3.Distance(targetPos, transform.position) < 0.01f)
         {
             movementTriggered = false;
